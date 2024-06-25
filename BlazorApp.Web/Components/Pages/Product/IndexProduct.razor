@@ -1,0 +1,39 @@
+﻿@page "/product"
+<h3>IndexProduct</h3>
+
+@if (ProductModels == null)
+{
+    <p>Loading ...</p>
+}
+else
+{
+    <button class="btn btn-primary">Create</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ProductName</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>CreatedAt</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var product in ProductModels)
+            {
+                <tr>
+                    <td>@product.ProductName</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.Price</td>
+                    <td>@product.Description</td>
+                    <td>@product.CreateAt.ToShortDateString()</td>
+                    <td>
+                        <a class="btn btn-secondary">Update</a>
+                        <button class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
