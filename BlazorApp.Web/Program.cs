@@ -1,5 +1,6 @@
 using BlazorApp.Web;
 using BlazorApp.Web.Components;
+using Blazored.Toast;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddBlazoredToast();
 
 builder.Services.AddOutputCache();
 

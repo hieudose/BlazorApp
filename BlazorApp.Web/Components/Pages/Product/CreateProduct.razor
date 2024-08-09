@@ -1,0 +1,35 @@
+﻿@page "/product/create"
+<h3>CreateProduct</h3>
+@rendermode InteractiveServer
+
+<EditForm OnValidSubmit="Submit" FormName="CreateProduct" Model="Model">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label> PrductName</label>
+                <InputText class="form-control" @bind-Value="Model.ProductName" />
+                <ValidationMessage For="() => Model.ProductName" />
+            </div>
+            <div class="col-md-6">
+                <label> Quantity</label>
+                <InputNumber class="form-control" @bind-Value="Model.Quantity" />
+                <ValidationMessage For="() => Model.Quantity" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label> Price</label>
+                <InputNumber class="form-control" @bind-Value="Model.Price" />
+                <ValidationMessage For="() => Model.Price" />
+            </div>
+            <div class="col-md-6">
+                <label> Description</label>
+                <InputText class="form-control" @bind-Value="Model.Description" />
+                <ValidationMessage For="() => Model.Description" />
+            </div>
+        </div>
+        <button class="btn btn-secondary" type="submit">Save</button>
+    </div>
+</EditForm>
