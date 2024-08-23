@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="BlazorApp.Web.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="_content/Blazored.Toast/Blazored.Toast.bundle.scp.css" rel="stylesheet" />
-    <HeadOutlet @rendermode="InteractiveServer" />
+    <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer" />
+    <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 

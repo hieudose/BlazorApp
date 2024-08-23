@@ -1,4 +1,7 @@
 ﻿@page "/product"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Roles ="Admin,User")]
 
 <h3>IndexProduct</h3>
 
@@ -31,7 +34,11 @@ else
                     <td>@product.CreateAt.ToShortDateString()</td>
                     <td>
                         <a class="btn btn-secondary" href="/product/update/@product.ID">Update</a>
-                        <button class="btn btn-danger" @onclick="()=> { DeleteID = product.ID; Modal.Open();}">Delete</button>
+                        <AuthorizeView Roles="Admin">
+                            <Authorized>
+                                <button class="btn btn-danger" @onclick="()=> { DeleteID = product.ID; Modal.Open();}">Delete</button>
+                            </Authorized>
+                        </AuthorizeView>
                     </td>
                 </tr>
             }
