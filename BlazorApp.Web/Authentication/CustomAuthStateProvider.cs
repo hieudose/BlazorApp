@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using BlazorApp.Model.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,16 +10,16 @@ namespace BlazorApp.Web.Authentication
     {
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = (await localStorage.GetAsync<string>("authToken")).Value;
-            var identity = string.IsNullOrEmpty(token) ? new ClaimsIdentity() : GetClaimsIdentity(token);
+            var sessionModel = (await localStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
+            var identity = sessionModel == null ? new ClaimsIdentity() : GetClaimsIdentity(sessionModel.Token);
             var user = new ClaimsPrincipal(identity);
             return new AuthenticationState(user);
         }
 
-        public async Task MarkUserAsAuthenticated(string token)
+        public async Task MarkUserAsAuthenticated(LoginResponseModel model)
         {
-            await localStorage.SetAsync("authToken", token);
-            var identity = GetClaimsIdentity(token);
+            await localStorage.SetAsync("sessionState", model);
+            var identity = GetClaimsIdentity(model.Token);
             var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
@@ -33,7 +34,7 @@ namespace BlazorApp.Web.Authentication
 
         public async Task MarkUserAsLoggedOut()
         {
-            await localStorage.DeleteAsync("authToken");
+            await localStorage.DeleteAsync("sessionState");
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
