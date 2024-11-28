@@ -1,9 +1,9 @@
 ﻿@page "/product"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Localization
 
-<h3>IndexProduct</h3>
-
+<h3>@Localizers["Title"]</h3>
 @if (ProductModels == null)
 {
     <p>Loading ...</p>

@@ -32,7 +32,7 @@ namespace BlazorApp.ApiService.Controllers
                 return Ok(new LoginResponseModel { 
                     Token = token,
                     RefreshToken = refreshToken,
-                    TokenExpired = DateTimeOffset.UtcNow.AddMinutes(9).ToUnixTimeSeconds(),
+                    TokenExpired = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds(),
                 });
             }
             return null;
@@ -58,7 +58,7 @@ namespace BlazorApp.ApiService.Controllers
             return new LoginResponseModel
             {
                 Token = newToken,
-                TokenExpired = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
+                TokenExpired = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds(),
                 RefreshToken = newRefreshToken,
             };
         }
@@ -79,7 +79,7 @@ namespace BlazorApp.ApiService.Controllers
                 issuer: "doseHieu",
                 audience: "doseHieu",
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(isRefreshToken ? 24*60 : 9),
+                expires: DateTime.UtcNow.AddMinutes(isRefreshToken ? 24*60 : 30),
                 signingCredentials: creds
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);

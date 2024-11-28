@@ -1,13 +1,16 @@
 using BlazorApp.Model.Models;
 using BlazorApp.Web.Authentication;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Localization;
 using Newtonsoft.Json;
+using System.Globalization;
 using System.Net.Http.Headers;
 
 namespace BlazorApp.Web;
 
-public class ApiClient(HttpClient httpClient, ProtectedLocalStorage localStorage, AuthenticationStateProvider authStateProvider)
+public class ApiClient(HttpClient httpClient, ProtectedLocalStorage localStorage, NavigationManager navigationManager, AuthenticationStateProvider authStateProvider)
 {
     public async Task SetAuthorizeHeader()
     {
@@ -17,6 +20,7 @@ public class ApiClient(HttpClient httpClient, ProtectedLocalStorage localStorage
             if (sessionState.TokenExpired < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             {
                 await ((CustomAuthStateProvider)authStateProvider).MarkUserAsLoggedOut();
+                navigationManager.NavigateTo("/login");
             }
             else if (sessionState.TokenExpired < DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds())
             {
@@ -29,12 +33,21 @@ public class ApiClient(HttpClient httpClient, ProtectedLocalStorage localStorage
                 else
                 {
                     await ((CustomAuthStateProvider)authStateProvider).MarkUserAsLoggedOut();
+                    navigationManager.NavigateTo("/login");
                 }
             }
             else
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionState.Token);
             }
+
+            var requestCulture = new RequestCulture(
+                    CultureInfo.CurrentCulture,
+                    CultureInfo.CurrentUICulture
+                );
+            var cultureCookieValue = CookieRequestCultureProvider.MakeCookieValue(requestCulture);
+
+            httpClient.DefaultRequestHeaders.Add("Cookie", $"{CookieRequestCultureProvider.DefaultCookieName}={cultureCookieValue}");
         }
     }
     public async Task<T> GetFromJsonAsync<T>(string path)

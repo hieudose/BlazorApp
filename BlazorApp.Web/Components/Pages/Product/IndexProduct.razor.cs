@@ -3,7 +3,9 @@ using BlazorApp.Model.Models;
 using BlazorApp.Web.Components.BaseComponents;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using BlazorApp.Common.Resources;
 
 namespace BlazorApp.Web.Components.Pages.Product
 {
@@ -16,6 +18,10 @@ namespace BlazorApp.Web.Components.Pages.Product
         public int DeleteID { get; set; }
         [Inject]
         private IToastService ToastService { get; set; }
+        [Inject]
+        public IStringLocalizer<ProductTranslation> Localizers { get; set; }
+
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();

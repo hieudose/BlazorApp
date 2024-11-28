@@ -1,20 +1,26 @@
 ﻿using BlazorApp.BL.Services;
+using BlazorApp.Common.Resources;
 using BlazorApp.Model.Entities;
 using BlazorApp.Model.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace BlazorApp.ApiService.Controllers
 {
-    [Authorize(Roles ="Admin,User")]
+    [Authorize(Roles = "Admin,User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IProductService productService) : ControllerBase
+    public class ProductController(IProductService productService, IStringLocalizer<ProductTranslation> localizer) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<BaseResponseModel>> GetProducts()
         {
             var products = await productService.GetProducts();
+            foreach (var product in products)
+            {
+                product.Description = product.Description != null ? localizer[product.Description] : null;
+            }
             return Ok(new BaseResponseModel { Success = true, Data = products });
         }
 

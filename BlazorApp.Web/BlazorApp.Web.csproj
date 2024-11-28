@@ -13,12 +13,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazorApp.Common\BlazorApp.Common.csproj" />
     <ProjectReference Include="..\BlazorApp.Model\BlazorApp.Model.csproj" />
     <ProjectReference Include="..\BlazorApp.ServiceDefaults\BlazorApp.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="NewFolder\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

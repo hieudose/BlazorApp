@@ -3,6 +3,7 @@ using BlazorApp.Web.Authentication;
 using BlazorApp.Web.Components;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,10 @@ builder.Services.AddHttpClient<ApiClient>(client =>
         client.BaseAddress = new("https+http://localhost:7304");
     });
 
+// Add localization services
+builder.Services.AddLocalization();
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -35,6 +40,13 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+var supportedCultures = new[] { "en-US", "fr-FR" };
+var localizeoptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("en-US")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizeoptions);
 
 app.UseHttpsRedirection();
 
@@ -50,5 +62,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapDefaultEndpoints();
+app.MapControllers();
 
 app.Run();
