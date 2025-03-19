@@ -15,7 +15,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddBlazoredToast();
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthenticationCore();
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddOutputCache();
