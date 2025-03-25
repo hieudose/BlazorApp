@@ -1,4 +1,4 @@
-# CRUD App with Blazor Web App and .NET 8 Web API
+# CRUD App with Blazor Web App and Web API (.NET 8)
 
 ## Overview
 This project is a CRUD (Create, Read, Update, Delete) application built using the latest .NET 8 technologies. It features a **Blazor Web App** as the frontend and a **Web API** as the backend, with **Entity Framework Core (EF Core) Code-First** approach for database management using **SQL Server**.  It uses **.NET Aspire** for cloud-native development and application orchestration.
