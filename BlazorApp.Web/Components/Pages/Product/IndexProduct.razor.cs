@@ -1,11 +1,11 @@
-﻿using BlazorApp.Model.Entities;
+﻿using BlazorApp.Common.Resources;
+using BlazorApp.Model.Entities;
 using BlazorApp.Model.Models;
 using BlazorApp.Web.Components.BaseComponents;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
-using BlazorApp.Common.Resources;
 
 namespace BlazorApp.Web.Components.Pages.Product
 {

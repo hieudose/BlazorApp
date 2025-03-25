@@ -14,40 +14,47 @@ public class ApiClient(HttpClient httpClient, ProtectedLocalStorage localStorage
 {
     public async Task SetAuthorizeHeader()
     {
-        var sessionState = (await localStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
-        if (sessionState != null && !string.IsNullOrEmpty(sessionState.Token))
+        try
         {
-            if (sessionState.TokenExpired < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            var sessionState = (await localStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
+            if (sessionState != null && !string.IsNullOrEmpty(sessionState.Token))
             {
-                await ((CustomAuthStateProvider)authStateProvider).MarkUserAsLoggedOut();
-                navigationManager.NavigateTo("/login");
-            }
-            else if (sessionState.TokenExpired < DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds())
-            {
-                var res = await httpClient.GetFromJsonAsync<LoginResponseModel>($"/api/auth/loginByRefeshToken?refreshToken={sessionState.RefreshToken}");
-                if (res != null)
-                {
-                    await ((CustomAuthStateProvider)authStateProvider).MarkUserAsAuthenticated(res);
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", res.Token);
-                }
-                else
+                if (sessionState.TokenExpired < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
                 {
                     await ((CustomAuthStateProvider)authStateProvider).MarkUserAsLoggedOut();
                     navigationManager.NavigateTo("/login");
                 }
-            }
-            else
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionState.Token);
-            }
+                else if (sessionState.TokenExpired < DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds())
+                {
+                    var res = await httpClient.GetFromJsonAsync<LoginResponseModel>($"/api/auth/loginByRefeshToken?refreshToken={sessionState.RefreshToken}");
+                    if (res != null)
+                    {
+                        await ((CustomAuthStateProvider)authStateProvider).MarkUserAsAuthenticated(res);
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", res.Token);
+                    }
+                    else
+                    {
+                        await ((CustomAuthStateProvider)authStateProvider).MarkUserAsLoggedOut();
+                        navigationManager.NavigateTo("/login");
+                    }
+                }
+                else
+                {
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionState.Token);
+                }
 
-            var requestCulture = new RequestCulture(
-                    CultureInfo.CurrentCulture,
-                    CultureInfo.CurrentUICulture
-                );
-            var cultureCookieValue = CookieRequestCultureProvider.MakeCookieValue(requestCulture);
+                var requestCulture = new RequestCulture(
+                        CultureInfo.CurrentCulture,
+                        CultureInfo.CurrentUICulture
+                    );
+                var cultureCookieValue = CookieRequestCultureProvider.MakeCookieValue(requestCulture);
 
-            httpClient.DefaultRequestHeaders.Add("Cookie", $"{CookieRequestCultureProvider.DefaultCookieName}={cultureCookieValue}");
+                httpClient.DefaultRequestHeaders.Add("Cookie", $"{CookieRequestCultureProvider.DefaultCookieName}={cultureCookieValue}");
+            }
+        }
+        catch( Exception ex )
+        {
+            navigationManager.NavigateTo("/login");
         }
     }
     public async Task<T> GetFromJsonAsync<T>(string path)

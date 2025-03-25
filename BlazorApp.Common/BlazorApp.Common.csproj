@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources\ProductTranslation.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -3,7 +3,6 @@ using BlazorApp.Web.Authentication;
 using BlazorApp.Web.Components;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 
 builder.Services.AddHttpClient<ApiClient>(client =>
     {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://localhost:7304");
+        client.BaseAddress = new(Environment.GetEnvironmentVariable("API_BASE_URL") ?? "https+http://localhost:7304");
     });
 
 // Add localization services

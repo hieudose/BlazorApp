@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace BlazorApp.Web.Authentication
 {
@@ -10,10 +11,20 @@ namespace BlazorApp.Web.Authentication
     {
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var sessionModel = (await localStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
-            var identity = sessionModel == null ? new ClaimsIdentity() : GetClaimsIdentity(sessionModel.Token);
-            var user = new ClaimsPrincipal(identity);
-            return new AuthenticationState(user);
+            try
+            {
+                var sessionModel = (await localStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
+                var identity = sessionModel == null ? new ClaimsIdentity() : GetClaimsIdentity(sessionModel.Token);
+                var user = new ClaimsPrincipal(identity);
+                return new AuthenticationState(user);
+            }
+            catch(Exception ex)
+            {
+                await MarkUserAsLoggedOut();
+                var identity = new ClaimsIdentity();
+                var user = new ClaimsPrincipal(identity);
+                return new AuthenticationState(user);
+            }
         }
 
         public async Task MarkUserAsAuthenticated(LoginResponseModel model)

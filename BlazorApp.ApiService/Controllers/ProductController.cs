@@ -2,26 +2,33 @@
 using BlazorApp.Common.Resources;
 using BlazorApp.Model.Entities;
 using BlazorApp.Model.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace BlazorApp.ApiService.Controllers
 {
-    [Authorize(Roles = "Admin,User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IProductService productService, IStringLocalizer<ProductTranslation> localizer) : ControllerBase
+    public class ProductController(IProductService productService, IStringLocalizer<ProductTranslation> localizer, ILogger<ProductController> logger) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<BaseResponseModel>> GetProducts()
         {
-            var products = await productService.GetProducts();
-            foreach (var product in products)
+            try
             {
-                product.Description = product.Description != null ? localizer[product.Description] : null;
+                logger.LogInformation("Test log GetProducts");
+                var products = await productService.GetProducts();
+                foreach (var product in products)
+                {
+                    product.Description = product.Description != null ? localizer[product.Description] : null;
+                }
+                return Ok(new BaseResponseModel { Success = true, Data = products });
             }
-            return Ok(new BaseResponseModel { Success = true, Data = products });
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "GetProducts error");
+                return Ok(new BaseResponseModel { Success = false, ErrorMessage = ex.Message });
+            }
         }
 
         [HttpPost]

@@ -51,17 +51,22 @@
     public bool IsShowContent { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        var authState = await ((CustomAuthStateProvider)AuthStateProvider).GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (!user.Identity.IsAuthenticated)
+        try
         {
-            Navigation.NavigateTo("/login");
-        }
-        else
-        {
-            IsShowContent = true;
-        }
+            var authState = await ((CustomAuthStateProvider)AuthStateProvider).GetAuthenticationStateAsync();
+            var user = authState.User;
 
+            if (!user.Identity.IsAuthenticated)
+            {
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                IsShowContent = true;
+            }
+        }
+        catch(Exception ex){
+            Navigation.NavigateTo("/login", true);
+        }
     }
 }

@@ -1,0 +1,32 @@
+services:
+  apiservice:
+    build:
+      dockerfile: BlazorApp.ApiService/Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433; Database=CrudAppBlazor; User Id=sa; Password=123456; TrustServerCertificate=True;
+      - ConnectionStrings__cache=cache:6379
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - cache
+  webfrontend:
+    build: 
+     dockerfile: BlazorApp.Web/Dockerfile
+    ports:
+      - "5000:8080"
+    depends_on:
+      - apiservice
+    environment:
+      - API_BASE_URL=http://apiservice:8080
+  cache:
+    image: redis:latest
+    container_name: redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+volumes:
+  redis_data:

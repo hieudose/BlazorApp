@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorApp.Common\BlazorApp.Common.csproj" />
     <ProjectReference Include="..\BlazorApp.Database\BlazorApp.Database.csproj" />
     <ProjectReference Include="..\BlazorApp.Model\BlazorApp.Model.csproj" />
   </ItemGroup>

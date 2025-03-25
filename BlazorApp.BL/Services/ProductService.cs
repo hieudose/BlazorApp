@@ -1,10 +1,7 @@
 ﻿using BlazorApp.BL.Repositories;
 using BlazorApp.Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 
 namespace BlazorApp.BL.Services
 {
@@ -17,11 +14,13 @@ namespace BlazorApp.BL.Services
         Task<bool> ProductModelExists(int id);
         Task DeleteProduct(int id);
     }
-    public class ProductService(IProductRepository productRepository) : IProductService
+    public class ProductService(IProductRepository productRepository, IDistributedCache cacheService) : IProductService
     {
-        public Task<ProductModel> CreateProduct(ProductModel productModel)
+        public async Task<ProductModel> CreateProduct(ProductModel productModel)
         {
-            return productRepository.CreateProduct(productModel);
+            var product = await productRepository.CreateProduct(productModel);
+            await cacheService.RemoveAsync("list_products");
+            return product;
         }
 
         public Task<ProductModel> GetProduct(int id)
@@ -29,9 +28,17 @@ namespace BlazorApp.BL.Services
             return productRepository.GetProduct(id);
         }
 
-        public Task<List<ProductModel>> GetProducts()
+        public async Task<List<ProductModel>> GetProducts()
         {
-            return productRepository.GetProducts();
+            var cacheValue = await cacheService.GetStringAsync("list_products");
+            if (!string.IsNullOrEmpty(cacheValue))
+            {
+                return JsonConvert.DeserializeObject<List<ProductModel>>(cacheValue);
+            }
+            var products = await productRepository.GetProducts();
+            await cacheService.SetStringAsync("list_products", JsonConvert.SerializeObject(products));
+            return products;
+
         }
 
         public Task<bool> ProductModelExists(int id)
@@ -39,13 +46,15 @@ namespace BlazorApp.BL.Services
             return productRepository.ProductModelExists(id);
         }
 
-        public Task UpdateProduct(ProductModel productModel)
+        public async Task UpdateProduct(ProductModel productModel)
         {
-            return productRepository.UpdateProduct(productModel);
+            await productRepository.UpdateProduct(productModel);
+            await cacheService.RemoveAsync("list_products");
         }
-        public Task DeleteProduct(int id)
+        public async Task DeleteProduct(int id)
         {
-            return productRepository.DeleteProduct(id);
+            await productRepository.DeleteProduct(id);
+            await cacheService.RemoveAsync("list_products");
         }
     }
 }
