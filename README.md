@@ -23,7 +23,7 @@ This project is a CRUD (Create, Read, Update, Delete) application built using th
 - Cache Service
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License
 
 ## Contact
 For any inquiries, feel free to reach out via email or open an issue in the repository.
